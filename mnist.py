@@ -121,7 +121,7 @@ class My_VAE(nn.Module):
       lower_bound = [-KL, reconstruction]                                      
       return -sum(lower_bound)
 
-class My_VAE_V2(nn.Module):
+class Poor_Man_VAE(nn.Module):
     def __init__(self, z_dim):
       super().__init__()
       self.fw1 = nn.Linear(28*28, 28*14)
@@ -129,7 +129,11 @@ class My_VAE_V2(nn.Module):
       self.fw2 = nn.Linear(z_dim, 28*14)
       self.recover_layer = nn.Linear(28*14, 28*28)
       self.MSE = nn.MSELoss(reduction='sum')
-    
+      self.init_hook()
+
+    def init_hook(self):
+      pass
+
     def _encoder(self, x):
       z = self.add_disturbance(self.z_layer(F.sigmoid(self.fw1(x))))
       return z
@@ -157,6 +161,7 @@ class My_VAE_V2(nn.Module):
       # lower_bound = [-KL, reconstruction]                                      
       # return -sum(lower_bound)
 
+My_VAE_V2 = Poor_Man_VAE
 
 def train(model, epoch = 20):
   optimizer = optim.Adam(model.parameters(), lr=0.001)
